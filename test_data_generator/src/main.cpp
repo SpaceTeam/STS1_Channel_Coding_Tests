@@ -8,7 +8,8 @@ using namespace std;
 
 #define MAX_TX_FRAME_LEN 1024
 #define TX_FRAME_LEN 223
-#define SYNC_WORD 0x3C674952
+//#define SYNC_WORD 0x3C674952
+#define SYNC_WORD 0x1ACFFC1D
 #define POSTAMBLE_BYTES 8
 
 
@@ -37,19 +38,7 @@ int main(void) {
 
 	msg.len = TX_FRAME_LEN;
 
-
         struct tx_frame tmp_tx_msg{};
-
-        /* Calculate and append CRC for all encodings */
-        /*uint32_t c = crc32_c(msg.pdu, msg.len);
-        msg.pdu[msg.len] = c >> 24;
-        msg.pdu[msg.len + 1] = c >> 16;
-        msg.pdu[msg.len + 2] = c >> 8;
-        msg.pdu[msg.len + 3] = c;
-        msg.len += sizeof(uint32_t);*/
-
-        /* Always perform CCSDS scrambling */
-        ccsds_scrambler(msg.pdu, msg.len);
 
         memset(tmp_tx_msg.pdu, 0x33, 8);
         tmp_tx_msg.len = 8;
@@ -58,6 +47,8 @@ int main(void) {
         tmp_tx_msg.pdu[tmp_tx_msg.len++] = static_cast<uint8_t>(SYNC_WORD >> 8);
         tmp_tx_msg.pdu[tmp_tx_msg.len++] = static_cast<uint8_t>(SYNC_WORD);
 
+	uint16_t prefix_len = tmp_tx_msg.len;
+
         memcpy(tmp_tx_msg.pdu + tmp_tx_msg.len, msg.pdu, msg.len);
         tmp_tx_msg.len += msg.len;
 
@@ -65,6 +56,9 @@ int main(void) {
         rs_encode(tmp_tx_msg.pdu + tmp_tx_msg.len,
                 msg.pdu, msg.len);
         tmp_tx_msg.len += 32;
+
+        /* Always perform CCSDS scrambling */
+        ccsds_scrambler(tmp_tx_msg.pdu+prefix_len, tmp_tx_msg.len-prefix_len);
 
 	ofstream myfile;
 	myfile.open ("data_no_cc.bin");
