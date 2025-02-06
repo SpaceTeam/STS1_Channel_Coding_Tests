@@ -165,7 +165,7 @@ blocks:
     minoutbuf: '0'
     options: '""'
     precoding: None
-    rs_basis: '"conventional"'
+    rs_basis: '"dual"'
     rs_interleaving: '1'
     scrambler: '"CCSDS"'
     threshold: '5'
