@@ -19,6 +19,10 @@ You'll find the decoded output both in the log of GNU Radio and in `/tmp/output.
 
 Example C++ code can be found in `test_data_generator` that generates valid telemetry (downlink) packets both with and without convolutional coding. 
 
+## In case you want to test real hardware
+
+Use the flowgraph prefixed with "sdr". It's not perfect - the FSK demodulator could be quite a bit better - but it works.
+
 ## License
 
 As some parts of the test data generator are GPLv3 licensed, I made the decision to license the whole repo under GPLv3.  
