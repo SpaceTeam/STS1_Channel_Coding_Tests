@@ -51,101 +51,105 @@ unsigned char Tal1tab[] = {
 };
 
 int main(void) {
-    struct tx_frame {
-        uint16_t len;
-        uint32_t timeout_ms;
-        uint8_t pdu[MAX_TX_FRAME_LEN];
-    };
+	struct tx_frame {
+		uint16_t len;
+		uint32_t timeout_ms;
+		uint8_t pdu[MAX_TX_FRAME_LEN];
+	};
 
-    struct tx_frame msg{};
+	struct tx_frame msg{};
 
-    msg.len = 0;
-    memset(msg.pdu, 0, TX_FRAME_LEN);
-    msg.pdu[msg.len++] = 'h';
-    msg.pdu[msg.len++] = 'e';
-    msg.pdu[msg.len++] = 'l';
-    msg.pdu[msg.len++] = 'l';
-    msg.pdu[msg.len++] = 'o';
-    msg.pdu[msg.len++] = ' ';
-    msg.pdu[msg.len++] = 'w';
-    msg.pdu[msg.len++] = 'o';
-    msg.pdu[msg.len++] = 'r';
-    msg.pdu[msg.len++] = 'l';
-    msg.pdu[msg.len++] = 'd';
+	msg.len = 0;
+	memset(msg.pdu, 0, TX_FRAME_LEN);
+	msg.pdu[msg.len++] = 'h';
+	msg.pdu[msg.len++] = 'e';
+	msg.pdu[msg.len++] = 'l';
+	msg.pdu[msg.len++] = 'l';
+	msg.pdu[msg.len++] = 'o';
+	msg.pdu[msg.len++] = ' ';
+	msg.pdu[msg.len++] = 'w';
+	msg.pdu[msg.len++] = 'o';
+	msg.pdu[msg.len++] = 'r';
+	msg.pdu[msg.len++] = 'l';
+	msg.pdu[msg.len++] = 'd';
 
-    msg.len = TX_FRAME_LEN;
+	msg.len = TX_FRAME_LEN;
 
-    // Convert message content to dual bases representation
-    for(int i=0;i<msg.len;i++)
-        msg.pdu[i] = Tal1tab[msg.pdu[i]];
+	// Convert message content to dual bases representation
+	for(int i=0;i<msg.len;i++)
+		msg.pdu[i] = Tal1tab[msg.pdu[i]];
 
-    struct tx_frame tmp_tx_msg{};
+	struct tx_frame tmp_tx_msg{};
 
-    memset(tmp_tx_msg.pdu, 0x33, 8);
-    tmp_tx_msg.len = 8;
-    tmp_tx_msg.pdu[tmp_tx_msg.len++] = static_cast<uint8_t>(SYNC_WORD >> 24);
-    tmp_tx_msg.pdu[tmp_tx_msg.len++] = static_cast<uint8_t>(SYNC_WORD >> 16);
-    tmp_tx_msg.pdu[tmp_tx_msg.len++] = static_cast<uint8_t>(SYNC_WORD >> 8);
-    tmp_tx_msg.pdu[tmp_tx_msg.len++] = static_cast<uint8_t>(SYNC_WORD);
+	memset(tmp_tx_msg.pdu, 0x33, 8);
+	tmp_tx_msg.len = 8;
+	tmp_tx_msg.pdu[tmp_tx_msg.len++] = static_cast<uint8_t>(SYNC_WORD >> 24);
+	tmp_tx_msg.pdu[tmp_tx_msg.len++] = static_cast<uint8_t>(SYNC_WORD >> 16);
+	tmp_tx_msg.pdu[tmp_tx_msg.len++] = static_cast<uint8_t>(SYNC_WORD >> 8);
+	tmp_tx_msg.pdu[tmp_tx_msg.len++] = static_cast<uint8_t>(SYNC_WORD);
 
-    uint16_t prefix_len = tmp_tx_msg.len;
+	uint16_t prefix_len = tmp_tx_msg.len;
 
-    memcpy(tmp_tx_msg.pdu + tmp_tx_msg.len, msg.pdu, msg.len);
-    tmp_tx_msg.len += msg.len;
+	memcpy(tmp_tx_msg.pdu + tmp_tx_msg.len, msg.pdu, msg.len);
+	tmp_tx_msg.len += msg.len;
 
-    /* Perform RS */
-    rs_encode(tmp_tx_msg.pdu + tmp_tx_msg.len,
-            msg.pdu, msg.len);
-    tmp_tx_msg.len += 32;
+	/* Perform RS */
+	rs_encode(tmp_tx_msg.pdu + tmp_tx_msg.len, msg.pdu, msg.len);
+	tmp_tx_msg.len += 32;
 
-    // Convert parity to dual bases representation
-    for(int i=tmp_tx_msg.len-32;i<tmp_tx_msg.len;i++)
-        tmp_tx_msg.pdu[i] = Taltab[tmp_tx_msg.pdu[i]];
+	// Convert parity to dual bases representation
+	for(int i=tmp_tx_msg.len-32;i<tmp_tx_msg.len;i++)
+		tmp_tx_msg.pdu[i] = Taltab[tmp_tx_msg.pdu[i]];
 
-    /* Always perform CCSDS scrambling */
-    ccsds_scrambler(tmp_tx_msg.pdu+prefix_len, tmp_tx_msg.len-prefix_len);
+	/* Always perform CCSDS scrambling */
+	ccsds_scrambler(tmp_tx_msg.pdu+prefix_len, tmp_tx_msg.len-prefix_len);
 
 	ofstream myfile;
 	myfile.open ("data_no_cc.bin");
 
 	char test[1] = {0};
 
+	printf("unsigned char data_no_cc[] = {");
 	for (int i=0; i<tmp_tx_msg.len; i++) {
 		for (int ii=7; ii>=0; ii--) {
 			if (((tmp_tx_msg.pdu[i] >> ii) & 0b00000001) == 0b00000001) test[0]=1;
 			else test[0]=0;
 			myfile.write(test,1);
 		}
-		//printf("%02x ", tmp_tx_msg.pdu[i]);
+		printf("0x%02x", tmp_tx_msg.pdu[i]);
+		if (i != tmp_tx_msg.len-1) printf(", ");
 	}
+	printf("};\n");
 	test[0] = 0;
 	for (int i=0; i<512; i++) myfile.write(test,1);
 	myfile.flush();
 	myfile.close();
-	//printf("\n\n");
-        /*
-         * Append a zero byte (more than 6 zero bits), to ensure
-         * the reset of the convolutional encoder
-         */
-        tmp_tx_msg.pdu[tmp_tx_msg.len++] = 0;
-        conv_encoder_1_2_7(msg.pdu, tmp_tx_msg.pdu,
-                tmp_tx_msg.len);
-        /* For consistency copy back the result */
-        memcpy(tmp_tx_msg.pdu, msg.pdu, 2 * tmp_tx_msg.len);
-        tmp_tx_msg.len *= 2;
-        tmp_tx_msg.len += POSTAMBLE_BYTES;
+	/*
+	 * Append a zero byte (more than 6 zero bits), to ensure
+	 * the reset of the convolutional encoder
+	 */
+	tmp_tx_msg.pdu[tmp_tx_msg.len++] = 0;
+	conv_encoder_1_2_7(msg.pdu, tmp_tx_msg.pdu, tmp_tx_msg.len);
+	/* For consistency copy back the result */
+	memcpy(tmp_tx_msg.pdu, msg.pdu, 2 * tmp_tx_msg.len);
+	tmp_tx_msg.len *= 2;
+	tmp_tx_msg.len += POSTAMBLE_BYTES;
 
 	myfile.open ("data_cc.bin");
 	test[0] = 0;
 	for (int i=0; i<512; i++) myfile.write(test,1);
+
+	printf("unsigned char data_cc[] = {");
 	for (int i=0; i<tmp_tx_msg.len; i++) {
 		for (int ii=7; ii>=0; ii--) {
 			if (((tmp_tx_msg.pdu[i] >> ii) & 0b00000001) == 0b00000001) test[0]=1;
 			else test[0]=0;
 			myfile.write(test,1);
 		}
-		//printf("%02x ", tmp_tx_msg.pdu[i]);
+		printf("0x%02x", tmp_tx_msg.pdu[i]);
+		if (i != tmp_tx_msg.len-1) printf(", ");
 	}
+	printf("};\n");
 	test[0] = 0;
 	for (int i=0; i<512; i++) myfile.write(test,1);
 	myfile.flush();
