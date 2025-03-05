@@ -1,0 +1,278 @@
+options:
+  parameters:
+    author: Manolis Surligas (surligas@gmail.com)
+    catch_exceptions: 'True'
+    category: '[GRC Hier Blocks]'
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: Decoder for the QUBIK 1 & 2 satellites
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: qt_gui
+    hier_block_src_path: '.:'
+    id: satnogs_qubik_telem
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: run
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: satnogs_qubik_telem
+    window_size: 2*1080,1080
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [16, 16.0]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: baudrate
+  id: variable
+  parameters:
+    comment: ''
+    value: '9600'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [528, 80.0]
+    rotation: 0
+    state: enabled
+- name: decimation
+  id: variable
+  parameters:
+    comment: ''
+    value: '16'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [704, 80.0]
+    rotation: 0
+    state: enabled
+- name: lo_offset
+  id: variable
+  parameters:
+    comment: ''
+    value: '100000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [616, 80.0]
+    rotation: 0
+    state: enabled
+- name: rx_freq
+  id: variable
+  parameters:
+    comment: ''
+    value: '437395000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [432, 80.0]
+    rotation: 0
+    state: enabled
+- name: samp_rate_rx
+  id: variable
+  parameters:
+    comment: ''
+    value: '8000000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [328, 80.0]
+    rotation: 0
+    state: enabled
+- name: blocks_file_source_0
+  id: blocks_file_source
+  parameters:
+    affinity: ''
+    alias: ''
+    begin_tag: pmt.PMT_NIL
+    comment: ''
+    file: /tmp/input.bin
+    length: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    repeat: 'False'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [216, 312.0]
+    rotation: 0
+    state: enabled
+- name: blocks_freqshift_cc_0
+  id: blocks_freqshift_cc
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    freq: lo_offset
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    sample_rate: samp_rate_rx
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [704, 336.0]
+    rotation: 0
+    state: enabled
+- name: digital_gmsk_mod_0
+  id: digital_gmsk_mod
+  parameters:
+    affinity: ''
+    alias: ''
+    bt: '0.35'
+    comment: ''
+    do_unpack: 'True'
+    log: 'False'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_symbol: samp_rate_rx//baudrate
+    verbose: 'False'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [440, 336.0]
+    rotation: 0
+    state: enabled
+- name: digital_gmskmod_bc_0
+  id: digital_gmskmod_bc
+  parameters:
+    L: '4'
+    affinity: ''
+    alias: ''
+    bt: '0.3'
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_symbol: samp_rate_rx//baudrate
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [416, 328.0]
+    rotation: 0
+    state: disabled
+- name: import_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: import math
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [208, 96.0]
+    rotation: 0
+    state: enabled
+- name: qtgui_waterfall_sink_x_0
+  id: qtgui_waterfall_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    axislabels: 'True'
+    bw: samp_rate_rx
+    color1: '0'
+    color10: '0'
+    color2: '0'
+    color3: '0'
+    color4: '0'
+    color5: '0'
+    color6: '0'
+    color7: '0'
+    color8: '0'
+    color9: '0'
+    comment: ''
+    fc: '0'
+    fftsize: '1024'
+    freqhalf: 'True'
+    grid: 'False'
+    gui_hint: ''
+    int_max: '10'
+    int_min: '-140'
+    label1: ''
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    legend: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    name: '""'
+    nconnections: '1'
+    showports: 'False'
+    type: complex
+    update_time: '0.10'
+    wintype: window.WIN_BLACKMAN_hARRIS
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [944, 224.0]
+    rotation: 0
+    state: enabled
+- name: soapy_hackrf_sink_0
+  id: soapy_hackrf_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: 'True'
+    bandwidth: '0'
+    center_freq: rx_freq-lo_offset
+    comment: ''
+    dev_args: ''
+    samp_rate: samp_rate_rx
+    type: fc32
+    vga: '16'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [944, 352.0]
+    rotation: 0
+    state: enabled
+
+connections:
+- [blocks_file_source_0, '0', digital_gmsk_mod_0, '0']
+- [blocks_file_source_0, '0', digital_gmskmod_bc_0, '0']
+- [blocks_freqshift_cc_0, '0', qtgui_waterfall_sink_x_0, '0']
+- [blocks_freqshift_cc_0, '0', soapy_hackrf_sink_0, '0']
+- [digital_gmsk_mod_0, '0', blocks_freqshift_cc_0, '0']
+- [digital_gmskmod_bc_0, '0', blocks_freqshift_cc_0, '0']
+
+metadata:
+  file_format: 1
+  grc_version: 3.10.11.0

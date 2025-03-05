@@ -17,11 +17,15 @@ First copy your input file to the location mentioned above.
 After that start the flowgraph (the easiest way is to open it in GNU Radio Companion and press play.  
 You'll find the decoded output both in the log of GNU Radio and in `/tmp/output.bin`.  
 
-Example C++ code can be found in `test_data_generator` that generates valid telemetry (downlink) packets both with and without convolutional coding. 
+Example C++ code can be found in `test_data_generator` that generates valid telemetry (downlink) packets both with and without convolutional coding.  
+Files starting with `tm` are intended to simulate telemetry data from the cubesat, files starting with `tc` are intended to be used to send test telecommand data to the cubesat.
 
 ## In case you want to test real hardware
 
 Use the flowgraph prefixed with "sdr". It's not perfect - the FSK demodulator could be quite a bit better - but it works.
+
+The `tc` flowgraph needs quite a lot (at least ~400 Byte) of trailing data to flush the buffer.  
+The test data generator automatically accounts for this.
 
 ## License
 

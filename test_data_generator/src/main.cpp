@@ -81,8 +81,8 @@ int main(void) {
 
 	struct tx_frame tmp_tx_msg{};
 
-	memset(tmp_tx_msg.pdu, 0x33, 8);
-	tmp_tx_msg.len = 8;
+	//memset(tmp_tx_msg.pdu, 0x33, 8);
+	//tmp_tx_msg.len = 8;
 	tmp_tx_msg.pdu[tmp_tx_msg.len++] = static_cast<uint8_t>(SYNC_WORD >> 24);
 	tmp_tx_msg.pdu[tmp_tx_msg.len++] = static_cast<uint8_t>(SYNC_WORD >> 16);
 	tmp_tx_msg.pdu[tmp_tx_msg.len++] = static_cast<uint8_t>(SYNC_WORD >> 8);
@@ -104,10 +104,12 @@ int main(void) {
 	/* Always perform CCSDS scrambling */
 	ccsds_scrambler(tmp_tx_msg.pdu+prefix_len, tmp_tx_msg.len-prefix_len);
 
-	ofstream myfile;
-	myfile.open ("data_no_cc.bin");
+	ofstream myfile, mybytefile;
+	myfile.open ("tm_data_no_cc.bin");
+	mybytefile.open ("tc_data_packed_no_cc.bin");
 
-	char test[1] = {0};
+	char test[1] = {0x55};
+	for (int i=0; i<4; i++) mybytefile.write(test,1);
 
 	printf("unsigned char data_no_cc[] = {");
 	for (int i=0; i<tmp_tx_msg.len; i++) {
@@ -116,6 +118,7 @@ int main(void) {
 			else test[0]=0;
 			myfile.write(test,1);
 		}
+		mybytefile.write(reinterpret_cast<char*>(&tmp_tx_msg.pdu[i]),1);
 		printf("0x%02x", tmp_tx_msg.pdu[i]);
 		if (i != tmp_tx_msg.len-1) printf(", ");
 	}
@@ -124,6 +127,11 @@ int main(void) {
 	for (int i=0; i<512; i++) myfile.write(test,1);
 	myfile.flush();
 	myfile.close();
+
+	test[0] = 0;
+	for (int i=0; i<512; i++) mybytefile.write(test,1);
+	mybytefile.flush();
+	mybytefile.close();
 	/*
 	 * Append a zero byte (more than 6 zero bits), to ensure
 	 * the reset of the convolutional encoder
@@ -135,7 +143,7 @@ int main(void) {
 	tmp_tx_msg.len *= 2;
 	tmp_tx_msg.len += POSTAMBLE_BYTES;
 
-	myfile.open ("data_cc.bin");
+	myfile.open ("tm_data_cc.bin");
 	test[0] = 0;
 	for (int i=0; i<512; i++) myfile.write(test,1);
 

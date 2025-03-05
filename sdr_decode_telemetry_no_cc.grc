@@ -45,11 +45,35 @@ blocks:
     coordinate: [528, 96.0]
     rotation: 0
     state: enabled
+- name: decimation
+  id: variable
+  parameters:
+    comment: ''
+    value: '16'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [704, 96.0]
+    rotation: 0
+    state: enabled
+- name: lo_offset
+  id: variable
+  parameters:
+    comment: ''
+    value: '100000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [616, 96.0]
+    rotation: 0
+    state: enabled
 - name: rx_freq
   id: variable
   parameters:
     comment: ''
-    value: '434500000'
+    value: '437395000'
   states:
     bus_sink: false
     bus_source: false
@@ -61,7 +85,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '960000'
+    value: '8000000'
   states:
     bus_sink: false
     bus_source: false
@@ -84,7 +108,24 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1256, 512.0]
+    coordinate: [1504, 504.0]
+    rotation: 0
+    state: enabled
+- name: blocks_freqshift_cc_0
+  id: blocks_freqshift_cc
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    freq: -lo_offset
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    sample_rate: samp_rate_rx
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [256, 512.0]
     rotation: 0
     state: enabled
 - name: blocks_message_debug_0
@@ -99,7 +140,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1024, 376.0]
+    coordinate: [1272, 368.0]
     rotation: 0
     state: enabled
 - name: import_0
@@ -113,6 +154,30 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [208, 96.0]
+    rotation: 0
+    state: enabled
+- name: low_pass_filter_0_0
+  id: low_pass_filter
+  parameters:
+    affinity: ''
+    alias: ''
+    beta: '6.76'
+    comment: ''
+    cutoff_freq: 0.625 * baudrate * 2
+    decim: decimation
+    gain: '1'
+    interp: '1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samp_rate: samp_rate_rx
+    type: fir_filter_ccf
+    width: baudrate / 8.0
+    win: window.WIN_HAMMING
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [448, 468.0]
     rotation: 0
     state: enabled
 - name: pdu_pdu_to_stream_x_0
@@ -130,7 +195,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1024, 528.0]
+    coordinate: [1272, 520.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0
@@ -227,7 +292,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [608, 288.0]
+    coordinate: [856, 280.0]
     rotation: 0
     state: enabled
 - name: qtgui_waterfall_sink_x_0
@@ -246,7 +311,7 @@ blocks:
     alpha8: '1.0'
     alpha9: '1.0'
     axislabels: 'True'
-    bw: samp_rate_rx
+    bw: samp_rate_rx//decimation
     color1: '0'
     color10: '0'
     color2: '0'
@@ -288,7 +353,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [360, 288.0]
+    coordinate: [648, 280.0]
     rotation: 0
     state: enabled
 - name: satellites_ccsds_rs_deframer_0
@@ -305,12 +370,12 @@ blocks:
     rs_basis: '"dual"'
     rs_interleaving: '1'
     scrambler: '"CCSDS"'
-    threshold: '9'
+    threshold: '7'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [672, 488.0]
+    coordinate: [920, 480.0]
     rotation: 0
     state: enabled
 - name: satellites_fsk_demodulator_0
@@ -324,13 +389,36 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     options: '""'
-    samp_rate: samp_rate_rx
+    samp_rate: samp_rate_rx//decimation
     subaudio: 'False'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [400, 512.0]
+    coordinate: [680, 504.0]
+    rotation: 0
+    state: enabled
+- name: soapy_hackrf_source_0
+  id: soapy_hackrf_source
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: 'False'
+    bandwidth: '0'
+    center_freq: rx_freq-lo_offset
+    comment: ''
+    dev_args: ''
+    gain: '32'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samp_rate: samp_rate_rx
+    type: fc32
+    vga: '30'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [48, 512.0]
     rotation: 0
     state: enabled
 - name: soapy_rtlsdr_source_0
@@ -345,7 +433,7 @@ blocks:
     comment: ''
     dev_args: ''
     freq_correction: '0'
-    gain: '5'
+    gain: '25'
     maxoutbuf: '0'
     minoutbuf: '0'
     samp_rate: samp_rate_rx
@@ -356,14 +444,18 @@ blocks:
     bus_structure: null
     coordinate: [112, 520.0]
     rotation: 0
-    state: enabled
+    state: disabled
 
 connections:
+- [blocks_freqshift_cc_0, '0', low_pass_filter_0_0, '0']
+- [low_pass_filter_0_0, '0', qtgui_waterfall_sink_x_0, '0']
+- [low_pass_filter_0_0, '0', satellites_fsk_demodulator_0, '0']
 - [pdu_pdu_to_stream_x_0, '0', blocks_file_sink_0, '0']
 - [satellites_ccsds_rs_deframer_0, out, blocks_message_debug_0, print]
 - [satellites_ccsds_rs_deframer_0, out, pdu_pdu_to_stream_x_0, pdus]
 - [satellites_fsk_demodulator_0, '0', qtgui_time_sink_x_0, '0']
 - [satellites_fsk_demodulator_0, '0', satellites_ccsds_rs_deframer_0, '0']
+- [soapy_hackrf_source_0, '0', blocks_freqshift_cc_0, '0']
 - [soapy_rtlsdr_source_0, '0', qtgui_waterfall_sink_x_0, '0']
 - [soapy_rtlsdr_source_0, '0', satellites_fsk_demodulator_0, '0']
 
