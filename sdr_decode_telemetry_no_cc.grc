@@ -421,30 +421,6 @@ blocks:
     coordinate: [48, 512.0]
     rotation: 0
     state: enabled
-- name: soapy_rtlsdr_source_0
-  id: soapy_rtlsdr_source
-  parameters:
-    affinity: ''
-    agc: 'False'
-    alias: ''
-    bias: 'False'
-    bufflen: '16384'
-    center_freq: rx_freq
-    comment: ''
-    dev_args: ''
-    freq_correction: '0'
-    gain: '25'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samp_rate: samp_rate_rx
-    type: fc32
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [112, 520.0]
-    rotation: 0
-    state: disabled
 
 connections:
 - [blocks_freqshift_cc_0, '0', low_pass_filter_0_0, '0']
@@ -456,9 +432,7 @@ connections:
 - [satellites_fsk_demodulator_0, '0', qtgui_time_sink_x_0, '0']
 - [satellites_fsk_demodulator_0, '0', satellites_ccsds_rs_deframer_0, '0']
 - [soapy_hackrf_source_0, '0', blocks_freqshift_cc_0, '0']
-- [soapy_rtlsdr_source_0, '0', qtgui_waterfall_sink_x_0, '0']
-- [soapy_rtlsdr_source_0, '0', satellites_fsk_demodulator_0, '0']
 
 metadata:
   file_format: 1
-  grc_version: 3.10.11.0
+  grc_version: 3.10.12.0
