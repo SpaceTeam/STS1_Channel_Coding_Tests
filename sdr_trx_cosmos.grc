@@ -129,6 +129,63 @@ blocks:
     coordinate: [400, 152.0]
     rotation: 0
     state: enabled
+- name: blocks_add_const_vxx_0
+  id: blocks_add_const_vxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    const: '-1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: float
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [648, 320.0]
+    rotation: 0
+    state: disabled
+- name: blocks_char_to_float_0
+  id: blocks_char_to_float
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    scale: 1/2
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [488, 320.0]
+    rotation: 0
+    state: disabled
+- name: blocks_file_source_0
+  id: blocks_file_source
+  parameters:
+    affinity: ''
+    alias: ''
+    begin_tag: pmt.PMT_NIL
+    comment: ''
+    file: /tmp/input.bin
+    length: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    repeat: 'False'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [304, 288.0]
+    rotation: 0
+    state: disabled
 - name: blocks_freqshift_cc_0
   id: blocks_freqshift_cc
   parameters:
@@ -259,33 +316,13 @@ blocks:
     coordinate: [480, 544.0]
     rotation: 0
     state: enabled
-- name: network_socket_pdu_0
-  id: network_socket_pdu
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    host: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    mtu: '10000'
-    port: '52001'
-    tcp_no_delay: 'False'
-    type: TCP_SERVER
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [856, 40.0]
-    rotation: 0
-    state: enabled
 - name: network_socket_pdu_1
   id: network_socket_pdu
   parameters:
     affinity: ''
     alias: ''
     comment: ''
-    host: 127.0.0.1
+    host: 10.99.97.43
     maxoutbuf: '0'
     minoutbuf: '0'
     mtu: '1500'
@@ -296,7 +333,27 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [88, 936.0]
+    coordinate: [1984, 680.0]
+    rotation: 0
+    state: enabled
+- name: network_socket_pdu_1_0
+  id: network_socket_pdu
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    host: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    mtu: '1500'
+    port: '52001'
+    tcp_no_delay: 'False'
+    type: UDP_SERVER
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [72, 936.0]
     rotation: 0
     state: enabled
 - name: pdu_pdu_lambda_0
@@ -327,7 +384,7 @@ blocks:
     comment: ''
     fn: 'lambda x: pmt.cons(pmt.PMT_NIL,pmt.to_pmt(np.concatenate((np.asarray([pmt.to_uint64(pmt.dict_ref(pmt.car(x),
       pmt.intern("baudrate"), pmt.PMT_NIL)), pmt.to_uint64(pmt.dict_ref(pmt.car(x),
-      pmt.intern("rs_errors"), pmt.PMT_NIL))], np.uint64).view(dtype=np.uint8),pmt.to_python(pmt.cdr(x))))))'
+      pmt.intern("rs_errors"), pmt.PMT_NIL))], np.uint64).byteswap().view(dtype=np.uint8),pmt.to_python(pmt.cdr(x))))))'
     key: pmt.intern("key")
     maxoutbuf: '0'
     metadict: Raw Message
@@ -667,7 +724,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [248, 952.0]
+    coordinate: [256, 952.0]
     rotation: 0
     state: enabled
 - name: satellites_fsk_demodulator_0
@@ -755,6 +812,9 @@ blocks:
     state: enabled
 
 connections:
+- [blocks_add_const_vxx_0, '0', satellites_ccsds_rs_deframer_0, '0']
+- [blocks_char_to_float_0, '0', blocks_add_const_vxx_0, '0']
+- [blocks_file_source_0, '0', blocks_char_to_float_0, '0']
 - [blocks_freqshift_cc_0, '0', qtgui_waterfall_sink_x_0, '0']
 - [blocks_freqshift_cc_0, '0', soapy_hackrf_sink_0, '0']
 - [blocks_freqshift_cc_0_0, '0', low_pass_filter_0_0, '0']
@@ -763,7 +823,7 @@ connections:
 - [low_pass_filter_0_0, '0', satellites_fsk_demodulator_0, '0']
 - [low_pass_filter_0_0_0, '0', qtgui_waterfall_sink_x_0_0, '0']
 - [low_pass_filter_0_0_0, '0', satellites_fsk_demodulator_0_0, '0']
-- [network_socket_pdu_1, pdus, satellites_encode_rs_ccsds_0, in]
+- [network_socket_pdu_1_0, pdus, satellites_encode_rs_ccsds_0, in]
 - [pdu_pdu_lambda_0, pdu, blocks_message_debug_0, print]
 - [pdu_pdu_lambda_0, pdu, pdu_pdu_to_tagged_stream_0, pdus]
 - [pdu_pdu_lambda_0_0, pdu, network_socket_pdu_1, pdus]
