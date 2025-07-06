@@ -61,7 +61,7 @@ int main(void) {
 
 	msg.len = 0;
 	memset(msg.pdu, 0, TX_FRAME_LEN);
-	msg.pdu[msg.len++] = 'h';
+	/*msg.pdu[msg.len++] = 'h';
 	msg.pdu[msg.len++] = 'e';
 	msg.pdu[msg.len++] = 'l';
 	msg.pdu[msg.len++] = 'l';
@@ -71,15 +71,17 @@ int main(void) {
 	msg.pdu[msg.len++] = 'o';
 	msg.pdu[msg.len++] = 'r';
 	msg.pdu[msg.len++] = 'l';
-	msg.pdu[msg.len++] = 'd';
+	msg.pdu[msg.len++] = 'd';*/
+	
+	ifstream infile;
+	infile.open("testdata.bin");
+	infile.read((char*)msg.pdu, TX_FRAME_LEN);
+	infile.close();
 
 	msg.len = TX_FRAME_LEN;
 
-	// Convert message content to dual bases representation
-	for(int i=0;i<msg.len;i++)
-		msg.pdu[i] = Tal1tab[msg.pdu[i]];
-
 	struct tx_frame tmp_tx_msg{};
+	tmp_tx_msg.len = 0;
 
 	//memset(tmp_tx_msg.pdu, 0x33, 8);
 	//tmp_tx_msg.len = 8;
@@ -92,6 +94,10 @@ int main(void) {
 
 	memcpy(tmp_tx_msg.pdu + tmp_tx_msg.len, msg.pdu, msg.len);
 	tmp_tx_msg.len += msg.len;
+
+	// Convert message content to dual bases representation
+	for(int i=0;i<msg.len;i++)
+		msg.pdu[i] = Tal1tab[msg.pdu[i]];
 
 	/* Perform RS */
 	rs_encode(tmp_tx_msg.pdu + tmp_tx_msg.len, msg.pdu, msg.len);
