@@ -33,6 +33,42 @@ options:
     state: enabled
 
 blocks:
+- name: cosmos_ip
+  id: variable
+  parameters:
+    comment: ''
+    value: '"10.99.97.43"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [832, 80.0]
+    rotation: 0
+    state: enabled
+- name: cosmos_mtu
+  id: variable
+  parameters:
+    comment: ''
+    value: '1400'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1040, 80.0]
+    rotation: 0
+    state: enabled
+- name: cosmos_port
+  id: variable
+  parameters:
+    comment: ''
+    value: '52001'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [944, 80.0]
+    rotation: 0
+    state: enabled
 - name: decimation
   id: variable
   parameters:
@@ -322,11 +358,11 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    host: 10.99.97.43
+    host: cosmos_ip
     maxoutbuf: '0'
     minoutbuf: '0'
-    mtu: '1500'
-    port: '52001'
+    mtu: cosmos_mtu
+    port: cosmos_port
     tcp_no_delay: 'False'
     type: UDP_CLIENT
   states:
@@ -345,8 +381,8 @@ blocks:
     host: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    mtu: '1500'
-    port: '52001'
+    mtu: cosmos_mtu
+    port: cosmos_port
     tcp_no_delay: 'False'
     type: UDP_SERVER
   states:
