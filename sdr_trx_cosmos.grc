@@ -1,17 +1,17 @@
 options:
   parameters:
-    author: Manolis Surligas (surligas@gmail.com)
+    author: ''
     catch_exceptions: 'True'
     category: '[GRC Hier Blocks]'
     cmake_opt: ''
     comment: ''
     copyright: ''
-    description: Decoder for the QUBIK 1 & 2 satellites
+    description: TRX for STS1 Cubesat
     gen_cmake: 'On'
     gen_linking: dynamic
     generate_options: no_gui
     hier_block_src_path: '.:'
-    id: satnogs_qubik_telem
+    id: sts1_trx_cosmos
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -22,7 +22,7 @@ options:
     run_options: run
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: satnogs_qubik_telem
+    title: sts1_trx_cosmos
     window_size: 2*1080,1080
   states:
     bus_sink: false
