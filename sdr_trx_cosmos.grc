@@ -9,7 +9,7 @@ options:
     description: Decoder for the QUBIK 1 & 2 satellites
     gen_cmake: 'On'
     gen_linking: dynamic
-    generate_options: qt_gui
+    generate_options: no_gui
     hier_block_src_path: '.:'
     id: satnogs_qubik_telem
     max_nouts: '0'
@@ -543,7 +543,7 @@ blocks:
     bus_structure: null
     coordinate: [952, 696.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: qtgui_waterfall_sink_x_0
   id: qtgui_waterfall_sink_x
   parameters:
@@ -604,7 +604,7 @@ blocks:
     bus_structure: null
     coordinate: [1488, 840.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: qtgui_waterfall_sink_x_0_0
   id: qtgui_waterfall_sink_x
   parameters:
@@ -665,7 +665,7 @@ blocks:
     bus_structure: null
     coordinate: [712, 696.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: satellites_ccsds_rs_deframer_0
   id: satellites_ccsds_rs_deframer
   parameters:
