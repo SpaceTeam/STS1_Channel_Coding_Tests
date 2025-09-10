@@ -475,7 +475,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1232, 592.0]
+    coordinate: [1232, 616.0]
     rotation: 0
     state: enabled
 - name: pdu_pdu_to_tagged_stream_0
@@ -589,7 +589,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [952, 696.0]
+    coordinate: [952, 728.0]
     rotation: 0
     state: disabled
 - name: qtgui_waterfall_sink_x_0
@@ -714,12 +714,13 @@ blocks:
     coordinate: [712, 696.0]
     rotation: 0
     state: disabled
-- name: satellites_ccsds_rs_deframer_0
-  id: satellites_ccsds_rs_deframer
+- name: satellites_ccsds_concatenated_deframer_0
+  id: satellites_ccsds_concatenated_deframer
   parameters:
     affinity: ''
     alias: ''
     comment: ''
+    convolutional: '"CCSDS uninverted"'
     frame_size: '223'
     maxoutbuf: '0'
     minoutbuf: '0'
@@ -733,15 +734,16 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [952, 424.0]
+    coordinate: [952, 412.0]
     rotation: 0
     state: enabled
-- name: satellites_ccsds_rs_deframer_0_0
-  id: satellites_ccsds_rs_deframer
+- name: satellites_ccsds_concatenated_deframer_0_0
+  id: satellites_ccsds_concatenated_deframer
   parameters:
     affinity: ''
     alias: ''
     comment: ''
+    convolutional: '"CCSDS uninverted"'
     frame_size: '223'
     maxoutbuf: '0'
     minoutbuf: '0'
@@ -755,7 +757,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [952, 560.0]
+    coordinate: [952, 572.0]
     rotation: 0
     state: enabled
 - name: satellites_encode_rs_ccsds_0
@@ -812,7 +814,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [712, 584.0]
+    coordinate: [712, 608.0]
     rotation: 0
     state: enabled
 - name: satellites_pdu_scrambler_0
@@ -895,7 +897,7 @@ blocks:
     state: enabled
 
 connections:
-- [blocks_add_const_vxx_0, '0', satellites_ccsds_rs_deframer_0, '0']
+- [blocks_add_const_vxx_0, '0', satellites_ccsds_concatenated_deframer_0, '0']
 - [blocks_char_to_float_0, '0', blocks_add_const_vxx_0, '0']
 - [blocks_file_source_0, '0', blocks_char_to_float_0, '0']
 - [blocks_freqshift_cc_0, '0', qtgui_waterfall_sink_x_0, '0']
@@ -915,12 +917,13 @@ connections:
 - [pdu_pdu_set_0_0, pdus, blocks_message_debug_0, print]
 - [pdu_pdu_set_0_0, pdus, pdu_pdu_lambda_0_0, pdu]
 - [pdu_pdu_to_tagged_stream_0, '0', digital_gmsk_mod_0, '0']
-- [satellites_ccsds_rs_deframer_0, out, pdu_pdu_set_0, pdus]
-- [satellites_ccsds_rs_deframer_0_0, out, pdu_pdu_set_0_0, pdus]
+- [satellites_ccsds_concatenated_deframer_0, out, pdu_pdu_set_0, pdus]
+- [satellites_ccsds_concatenated_deframer_0_0, out, pdu_pdu_set_0_0, pdus]
 - [satellites_encode_rs_ccsds_0, out, satellites_pdu_scrambler_0, in]
-- [satellites_fsk_demodulator_0, '0', satellites_ccsds_rs_deframer_0, '0']
+- [satellites_fsk_demodulator_0, '0', satellites_ccsds_concatenated_deframer_0, '0']
 - [satellites_fsk_demodulator_0_0, '0', qtgui_time_sink_x_0, '0']
-- [satellites_fsk_demodulator_0_0, '0', satellites_ccsds_rs_deframer_0_0, '0']
+- [satellites_fsk_demodulator_0_0, '0', satellites_ccsds_concatenated_deframer_0_0,
+  '0']
 - [satellites_pdu_scrambler_0, out, pdu_pdu_lambda_0, pdu]
 - [soapy_hackrf_source_0, '0', blocks_freqshift_cc_0_0, '0']
 
