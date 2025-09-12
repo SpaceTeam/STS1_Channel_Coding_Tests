@@ -423,8 +423,9 @@ blocks:
     alias: ''
     comment: ''
     fn: 'lambda x: np.concatenate((np.asarray([0x00]*int(tx_baudrate * tx_pre_switch_time
-      / 8), np.uint8), np.asarray([0x55, 0x55, 0x55, 0x55, 0x1A, 0xCF, 0xFC, 0x1D],
-      np.uint8),x,np.asarray([0x00]*int(tx_post_flush_bytes), np.uint8)))'
+      / 8), np.uint8), np.asarray([0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
+      0x1A, 0xCF, 0xFC, 0x1D], np.uint8),x,np.asarray([0x00]*int(tx_post_flush_bytes),
+      np.uint8)))'
     key: pmt.intern("key")
     maxoutbuf: '0'
     metadict: Uniform Vector
